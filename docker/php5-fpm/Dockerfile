@@ -1,0 +1,42 @@
+FROM php:5.6.30-fpm
+ 
+MAINTAINER Kenny Tchu <kenny@websaver.ca>
+ 
+RUN apt-get update && apt-get install -y \
+    git \
+    unzip \
+    zlib1g-dev \
+    libicu-dev \
+    g++
+
+# Install Composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer --version
+ 
+# Set timezone
+RUN rm /etc/localtime
+RUN ln -s /usr/share/zoneinfo/America/New_York /etc/localtime
+RUN "date"
+ 
+# Install the available extensions
+#RUN docker-php-ext-install pdo pdo_mysql intl apcu
+RUN docker-php-ext-install pdo pdo_mysql intl
+ 
+# install and active xdebug
+RUN pecl install xdebug
+RUN docker-php-ext-enable xdebug
+RUN echo "error_reporting = E_ALL" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "display_startup_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "display_errors = On" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.remote_enable=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.remote_connect_back=1" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.idekey=\"PHPSTORM\"" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+RUN echo "xdebug.remote_port=9001" >> /usr/local/etc/php/conf.d/docker-php-ext-xdebug.ini
+ 
+# Configure short open tag for Symfony
+RUN echo "short_open_tag = Off" >> /usr/local/etc/php/php.ini
+ 
+# for mac
+#RUN usermod -u 501 www-data 
+ 
+WORKDIR /var/www/docker_websaver
