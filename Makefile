@@ -36,3 +36,6 @@ rm:
  
 db:
     docker-compose exec db mysql -u root -p $(MYSQL_ROOT_PASSWORD)
+
+bash:
+    docker exec -it container_name bash

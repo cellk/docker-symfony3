@@ -10,6 +10,9 @@ services:
             MYSQL_DATABASE: ${MYSQL_DATABASE}
             MYSQL_USER: ${MYSQL_USER}
             MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+            #MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        volumes:
+            - ./docker/mysql/:/etc/mysql/conf.d
     phpmyadmin:
         image: phpmyadmin/phpmyadmin
         links:
@@ -17,11 +20,11 @@ services:
         ports:
             - 8181:80
     php:
-        build: ./docker/php7-fpm # Get our Dockerfile configuration
+        build: ./docker/php5-fpm # Get our Dockerfile configuration
         ports:
             - 9000:9000
         links:
-            - db:mysqldb
+            - db:mysql
         volumes:
             - .:/var/www/docker_websaver
     nginx:
